@@ -1,11 +1,9 @@
-const express = require('express');
-const router = express.Router();
 const Task = require('../models/Task');
-const auth = require('../middleware/auth');
 
-// Create task (admin only)
-router.post('/', auth, async (req, res) => {
+// @desc Create a task (admin only)
+exports.createTask = async (req, res) => {
     const { title, description, dueDate, category, assignedTo } = req.body;
+
     try {
         const task = await Task.create({
             title,
@@ -13,16 +11,16 @@ router.post('/', auth, async (req, res) => {
             dueDate,
             category,
             assignedTo,
-            createdBy: req.user.id
+            createdBy: req.user.id,
         });
         res.status(201).json(task);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(400).json({ message: err.message });
     }
-});
+};
 
-// Get tasks (admin: all, employee: own)
-router.get('/', auth, async (req, res) => {
+// @desc Get tasks (admin sees all, employee sees own)
+exports.getTasks = async (req, res) => {
     try {
         const query = req.user.role === 'admin' ? {} : { assignedTo: req.user.id };
         const tasks = await Task.find(query).populate('assignedTo', 'name');
@@ -30,10 +28,10 @@ router.get('/', auth, async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
-});
+};
 
-// Update task status
-router.patch('/:id', auth, async (req, res) => {
+// @desc Update task status
+exports.updateTaskStatus = async (req, res) => {
     try {
         const task = await Task.findByIdAndUpdate(
             req.params.id,
@@ -44,6 +42,4 @@ router.patch('/:id', auth, async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
-});
-
-module.exports = router;
+};
