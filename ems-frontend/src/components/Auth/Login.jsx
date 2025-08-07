@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Eye, EyeOff, Building2, Shield, CheckCircle } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); 
   const [error, setError] = useState('');
+
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -42,37 +46,48 @@ const Login = () => {
 
   return (
     <div className="flex h-screen">
-      {/* Left: Login Form */}
-      <div className=" w-full md:w-1/2 flex items-center justify-center px-6">
+      <div className="w-full md:w-1/2 flex items-center justify-center px-6">
         <motion.div
           className="w-full max-w-md space-y-6"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
         >
+        <div className="flex flex-col items-center space-y-2">
+            <motion.div 
+            className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-600/10 mb-4"
+            animate={{
+              y: [0, -10, 0]
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            <Building2 className="text-emerald-600 text-3xl drop-shadow-lg" />
+          </motion.div>
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
             <motion.div
-            initial={{ x: 0 }}
-            animate={{
-              x: [0, 10, -10, 0], // moves right, then left, then back to center
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <h2 className="text-3xl font-bold text-emerald-700 flex items-center">
-              Welcome Back
-            </h2>
+              initial={{ x: 0 }}
+              animate={{ x: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+   
+                <h2 className="text-3xl font-bold text-emerald-700">
+                  Welcome Back
+                </h2>
+                 </motion.div>
+            <p className="text-gray-500 mt-3 text-center">
+              Login to continue to your dashboard
+            </p>
           </motion.div>
+          </div>
 
-            <p className="text-gray-500 mt-1">Login to continue to your dashboard</p>
-          </motion.div>
 
           <motion.form
             onSubmit={submitHandler}
@@ -89,14 +104,25 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-5 py-3 border text-black border-emerald-600 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
-            <input
-              required
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-5 py-3 border text-black border-emerald-600 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
+
+            {/* Password field with eye icon */}
+            <div className="relative">
+              <input
+                required
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-5 py-3 border text-black border-emerald-600 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-12"
+              />
+              <span
+                onClick={togglePasswordVisibility}
+                className="absolute right-4 top-3.5 text-gray-600 cursor-pointer"
+              >
+                {showPassword ? <EyeOff /> : <Eye />}
+              </span>
+            </div>
+
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <button
               type="submit"
@@ -108,7 +134,7 @@ const Login = () => {
         </motion.div>
       </div>
 
-      {/* Right: Image or Brand */}
+      {/* Right Side Image Section */}
       <motion.div
         className="hidden md:block md:w-3/4 bg-gray-50 relative"
         initial={{ opacity: 0 }}
@@ -127,7 +153,7 @@ const Login = () => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.7 }}
         >
-          <h1 className="text-white text-4xl font-bold">StudyTogether Inc.</h1>
+          <h1 className="text-white text-4xl font-bold"></h1>
         </motion.div>
       </motion.div>
     </div>
