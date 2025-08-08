@@ -3,6 +3,7 @@ import {
   FaTasks,
   FaUserPlus,
   FaUsers,
+  FaCalendarCheck,
   FaBuilding,
   FaCogs,
   FaSignOutAlt,
@@ -34,6 +35,9 @@ const Sidebar = ({ handleLogout }) => {
         <button onClick={() => navigate('/all-tasks')} className="flex items-center gap-3 p-2 rounded hover:bg-gray-700 w-full text-left">
           <FaTasks /> Tasks
         </button>
+        <button onClick={() => navigate('/employee-calendar')} className="flex items-center gap-3 p-2 rounded hover:bg-gray-700 w-full text-left">
+                  <FaCalendarCheck /> Calendar
+                </button>
         <button onClick={() => navigate('/settings')} className="flex items-center gap-3 p-2 rounded hover:bg-gray-700 w-full text-left">
           <FaCogs /> Settings
         </button>

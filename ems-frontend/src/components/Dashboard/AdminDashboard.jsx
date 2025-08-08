@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '../main/Sidebar';
 import axios from 'axios';
+import Sidebar from '../main/Sidebar';
+
 import {
-  PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid
-} from 'recharts';
-import {
-  FaTasks, FaUsers, FaCheckCircle, FaSpinner, FaHourglassEnd,
+  FaTasks, FaCheckCircle, FaSpinner, FaHourglassEnd
 } from 'react-icons/fa';
 
-const COLORS = ['#fbbf24', '#3b82f6', '#10b981'];
+import StatsCard from './StatsCard';
+import MiniCalendar from './MiniCalendar';
+import QuoteOfTheDay from './QuoteOfTheDay';
+import TeamSection from './TeamSection';
+import UpcomingEvents from './UpcomingEvents';
 
 const AdminDashboard = () => {
   const [user, setUser] = useState(null);
   const [taskCount, setTaskCount] = useState(0);
-  const [memberCount, setMemberCount] = useState(0);
   const [taskStatusData, setTaskStatusData] = useState([]);
-  const [recentTasks, setRecentTasks] = useState([]);
-  const [taskTrends, setTaskTrends] = useState([]);
   const [overdueCount, setOverdueCount] = useState(0);
+  const [teamMembers, setTeamMembers] = useState([]);
 
   const navigate = useNavigate();
 
@@ -41,48 +40,36 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
       const token = localStorage.getItem('token');
       try {
-        const [tasksRes, membersRes] = await Promise.all([
+        const [tasksRes, usersRes, teamRes] = await Promise.all([
           axios.get('http://localhost:5000/api/tasks', {
             headers: { Authorization: `Bearer ${token}` },
           }),
           axios.get('http://localhost:5000/api/users', {
             headers: { Authorization: `Bearer ${token}` },
-          }),
+          })
         ]);
 
         const tasks = tasksRes.data;
-        const members = membersRes.data.filter(user => user.role === 'employee');
         setTaskCount(tasks.length);
-        setMemberCount(members.length);
-        setRecentTasks(tasks.slice(-5).reverse());
 
-        // Status counts
-        const statusCounts = tasks.reduce((acc, task) => {
-          acc[task.status] = (acc[task.status] || 0) + 1;
+        // Status breakdown
+        const counts = tasks.reduce((acc, t) => {
+          acc[t.status] = (acc[t.status] || 0) + 1;
           return acc;
         }, {});
-        const pieData = [
-          { name: 'Pending', value: statusCounts['pending'] || 0 },
-          { name: 'In Progress', value: statusCounts['in progress'] || 0 },
-          { name: 'Completed', value: statusCounts['completed'] || 0 },
-        ];
-        setTaskStatusData(pieData);
+        setTaskStatusData([
+          { name: 'Pending', value: counts['pending'] || 0 },
+          { name: 'In Progress', value: counts['in progress'] || 0 },
+          { name: 'Completed', value: counts['completed'] || 0 },
+        ]);
 
-        // Overdue count
         const now = new Date();
-        const overdue = tasks.filter(task => new Date(task.dueDate) < now && task.status !== 'completed');
+        const overdue = tasks.filter(
+          t => new Date(t.dueDate) < now && t.status !== 'completed'
+        );
         setOverdueCount(overdue.length);
-
-        // Tasks created by date
-        const trends = {};
-        tasks.forEach(task => {
-          const date = new Date(task.createdAt).toLocaleDateString();
-          trends[date] = (trends[date] || 0) + 1;
-        });
-        setTaskTrends(Object.entries(trends).map(([date, count]) => ({ date, count })));
-
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('Error fetching dashboard data', err);
       }
     };
 
@@ -91,105 +78,46 @@ const AdminDashboard = () => {
 
   if (!user) return null;
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'online': return 'bg-green-500';
+      case 'busy': return 'bg-yellow-500';
+      case 'offline': return 'bg-gray-400';
+      default: return 'bg-gray-400';
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-50">
       <Sidebar />
-      <main className="flex-1 p-6 overflow-y-auto">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Welcome, {user.name}</h2>
+      <main className="flex-1 p-8 overflow-y-auto space-y-10">
+        <h1 className="text-3xl font-bold text-gray-800">
+          Welcome back, {user.name}
+        </h1>
+        
+        <QuoteOfTheDay />
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-          <SummaryCard icon={<FaTasks />} label="Total Tasks" value={taskCount} color="indigo" />
-          <SummaryCard icon={<FaCheckCircle />} label="Completed" value={taskStatusData.find(t => t.name === 'Completed')?.value || 0} color="green" />
-          <SummaryCard icon={<FaSpinner />} label="In Progress" value={taskStatusData.find(t => t.name === 'In Progress')?.value || 0} color="blue" />
-          <SummaryCard icon={<FaHourglassEnd />} label="Overdue" value={overdueCount} color="red" />
-          <SummaryCard icon={<FaUsers />} label="Team Members" value={memberCount} color="purple" />
+        {/* Stats cards */}
+        <div className="flex flex-wrap gap-6">
+         <StatsCard title="Total Tasks" icon={FaTasks} variant="default" statKey="totalTasks" />
+          <StatsCard title="Completed" icon={FaCheckCircle} variant="success" statKey="completed" />
+          <StatsCard title="In Progress" icon={FaSpinner} variant="warning" statKey="inProgress" />
+          <StatsCard title="Overdue" icon={FaHourglassEnd} variant="destructive" statKey="overdue" />
         </div>
 
-        {/* Charts and Table */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <h3 className="text-lg font-semibold mb-4">Task Status Overview</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={taskStatusData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label
-                >
-                  {taskStatusData.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <h3 className="text-lg font-semibold mb-4">Tasks Created Over Time</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={taskTrends}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#6366f1" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        {/* Team and Calendar */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-10">
+         <div className="xl:col-span-2 space-y-6">
+          <TeamSection />
+          <UpcomingEvents />
         </div>
-
-        {/* Recent Tasks Table */}
-        <div className="bg-white p-6 rounded-2xl shadow overflow-x-auto">
-          <h3 className="text-xl font-semibold mb-4">Recent Tasks</h3>
-          <table className="min-w-full text-left text-sm">
-            <thead className="border-b font-medium text-gray-700">
-              <tr>
-                <th className="px-4 py-2">Title</th>
-                <th className="px-4 py-2">Assigned To</th>
-                <th className="px-4 py-2">Status</th>
-                <th className="px-4 py-2">Due Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentTasks.map(task => (
-                <tr key={task._id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-2">{task.title}</td>
-                  <td className="px-4 py-2">{task.assignedTo?.name || 'Unassigned'}</td>
-                  <td className="px-4 py-2 capitalize">{task.status}</td>
-                  <td className="px-4 py-2">{new Date(task.dueDate).toLocaleDateString()}</td>
-                </tr>
-              ))}
-              {recentTasks.length === 0 && (
-                <tr>
-                  <td colSpan="4" className="text-center py-4 text-gray-500">
-                    No recent tasks.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <div className="xl:col-span-1">
+            <MiniCalendar />
+          </div>
         </div>
       </main>
     </div>
   );
 };
-
-// SummaryCard component
-const SummaryCard = ({ icon, label, value, color }) => (
-  <div className="bg-white p-4 rounded-xl shadow flex items-center gap-3">
-    <div className={`text-3xl text-${color}-500`}>{icon}</div>
-    <div>
-      <p className="text-gray-500">{label}</p>
-      <h3 className="text-xl font-bold">{value}</h3>
-    </div>
-  </div>
-);
 
 export default AdminDashboard;

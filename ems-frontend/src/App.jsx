@@ -13,6 +13,7 @@ import CalendarPage from './components/calendars/CalendarPage';
 import TaskDetailsPage from './components/TaskList/TaskDetailsPage';
 import AllTasks from './components/TaskList/AllTasks';
 import SettingsEmployee from './components/main/SettingsEmployee';
+import TeamSection from './components/Dashboard/TeamSection';
 
 
 
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
         <Route path="/create-member" element={<CreateMember />} />
+       <Route path="/team-section" element={<TeamSection />} />
         <Route path="/create-task" element={<CreateTask />} />
         <Route path="/view-members" element={<ViewMembers />} />
         <Route path="/all-tasks" element={<AllTasks />} />
