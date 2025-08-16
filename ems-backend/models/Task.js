@@ -1,19 +1,55 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
 
-const taskSchema = new mongoose.Schema({
-    title: String,
-    description: String,
-    dueDate: Date,
-    category: String,
-    assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    status: {
-    type: String,
-    enum: ['pending', 'in progress', 'completed', 'declined'],
-    default: 'pending'
-    },
-    dueDate: Date,
-    notes: String,
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+const Task = sequelize.define('Task', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  dueDate: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  category: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  assignedTo: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: 'Users',
+      key: 'id'
+    }
+  },
+  status: {
+    type: DataTypes.ENUM('pending', 'in progress', 'completed', 'declined'),
+    defaultValue: 'pending'
+  },
+  notes: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  createdBy: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: 'Users',
+      key: 'id'
+    }
+  }
+}, {
+  timestamps: true,
+  tableName: 'Tasks'
 });
 
-module.exports = mongoose.model('Task', taskSchema);
+module.exports = Task;

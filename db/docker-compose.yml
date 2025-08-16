@@ -1,0 +1,29 @@
+
+services:
+  db:
+    image: postgres:16
+    restart: always 
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=emsDB
+      - POSTGRES_USER=emsUser
+      - POSTGRES_PASSWORD=emsPassword
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U emsUser -d emsDB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
