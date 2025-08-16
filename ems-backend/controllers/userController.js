@@ -20,14 +20,14 @@ exports.createUser = async (req, res) => {
 
 // @desc Get all users (admin only)
 exports.getAllUsers = async (req, res) => {
-    const users = await User.find().select('-password');
+    const users = await User.findAll({ attributes: { exclude: ['password'] } });
     res.json(users);
 };
 
 // @desc Delete a user (admin only)
 exports.deleteUser = async (req, res) => {
     try {
-        await User.findByIdAndDelete(req.params.id);
+        await User.destroy({ where: { id: req.params.id } });
         res.json({ message: 'User deleted' });
     } catch (err) {
         res.status(500).json({ message: err.message });

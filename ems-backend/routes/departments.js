@@ -9,11 +9,10 @@ router.post('/', async (req, res) => {
 
     if (!name) return res.status(400).json({ message: 'Name is required' });
 
-    const existing = await Department.findOne({ name });
+    const existing = await Department.findOne({ where: { name } });
     if (existing) return res.status(400).json({ message: 'Department already exists' });
 
-    const department = new Department({ name, description });
-    await department.save();
+    const department = await Department.create({ name, description });
 
     res.status(201).json(department);
   } catch (error) {
@@ -24,7 +23,7 @@ router.post('/', async (req, res) => {
 // Get all departments
 router.get('/', async (req, res) => {
   try {
-    const departments = await Department.find();
+    const departments = await Department.findAll();
     res.json(departments);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching departments' });

@@ -1,18 +1,22 @@
 const Task = require('../models/Task');
+const User = require('../models/User');
+const { Op } = require('sequelize');
 
 exports.getUpcomingTasks = async (req, res) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // ensure beginning of day
 
-    const query = {
-      dueDate: { $gte: today },
+    const whereClause = {
+      dueDate: { [Op.gte]: today },
       ...(req.user.role === 'employee' && { assignedTo: req.user.id }),
     };
 
-    const tasks = await Task.find(query)
-      .sort({ dueDate: 1 }) // sort by closest deadline
-      .select('title dueDate status'); // keep it lightweight
+    const tasks = await Task.findAll({
+      where: whereClause,
+      order: [['dueDate', 'ASC']],
+      attributes: ['id', 'title', 'dueDate', 'status']
+    });
 
     res.status(200).json(tasks);
   } catch (err) {
@@ -50,26 +54,31 @@ exports.getTasks = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const offset = (page - 1) * limit;
 
-    const query = req.user.role === 'admin'
+    const whereClause = req.user.role === 'admin'
       ? {}
       : { assignedTo: req.user.id };
 
-    const [tasks, totalCount] = await Promise.all([
-      Task.find(query)
-        .populate('assignedTo', 'name email')
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
-      Task.countDocuments(query)
-    ]);
+    const { count, rows: tasks } = await Task.findAndCountAll({
+      where: whereClause,
+      include: [
+        {
+          model: User,
+          as: 'AssignedUser',
+          attributes: ['id', 'name', 'email']
+        }
+      ],
+      order: [['createdAt', 'DESC']],
+      offset,
+      limit
+    });
 
     res.json({
       tasks,
-      totalCount,
+      totalCount: count,
       page,
-      totalPages: Math.ceil(totalCount / limit)
+      totalPages: Math.ceil(count / limit)
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -79,15 +88,27 @@ exports.getTasks = async (req, res) => {
 // @desc Get single task by ID
 exports.getTaskById = async (req, res) => {
   try {
-    const task = await Task.findById(req.params.id).populate('assignedTo', 'name email').populate('createdBy', 'name email')
-;
+    const task = await Task.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          as: 'AssignedUser',
+          attributes: ['id', 'name', 'email']
+        },
+        {
+          model: User,
+          as: 'TaskCreator',
+          attributes: ['id', 'name', 'email']
+        }
+      ]
+    });
 
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
     }
 
     // Restrict access if not admin and not assigned to the user
-    if (req.user.role !== 'admin' && task.assignedTo._id.toString() !== req.user.id) {
+    if (req.user.role !== 'admin' && task.assignedTo !== req.user.id) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -108,11 +129,11 @@ exports.updateTaskStatus = async (req, res) => {
   }
 
   try {
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findByPk(req.params.id);
     if (!task) return res.status(404).json({ message: 'Task not found' });
 
     // Employees can only update their own task
-    if (req.user.role !== 'admin' && task.assignedTo.toString() !== req.user.id) {
+    if (req.user.role !== 'admin' && task.assignedTo !== req.user.id) {
       return res.status(403).json({ message: 'Unauthorized' });
     }
 
@@ -130,18 +151,20 @@ exports.updateTaskStatus = async (req, res) => {
 exports.getMyTasks = async (req, res) => {
   const employeeId = req.user.id;
   const { page = 1, limit = 5 } = req.query;
+  const offset = (page - 1) * limit;
 
   try {
-    const tasks = await Task.find({ assignedTo: employeeId })
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
+    const { count, rows: tasks } = await Task.findAndCountAll({
+      where: { assignedTo: employeeId },
+      offset,
+      limit: parseInt(limit)
+    });
 
-    const totalCount = await Task.countDocuments({ assignedTo: employeeId });
-
-    res.json({ tasks, totalCount });
+    res.json({ tasks, totalCount: count });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 

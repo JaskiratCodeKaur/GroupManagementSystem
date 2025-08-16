@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Task = require('../models/Task');
+const User = require('../models/User');
+const { Op } = require('sequelize');
 const auth = require('../middleware/auth');
 const taskController = require('../controllers/taskController');
 
@@ -42,16 +44,21 @@ router.get('/', auth, async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const query = req.user.role === 'admin' ? {} : { assignedTo: req.user.id };
+    const whereClause = req.user.role === 'admin' ? {} : { assignedTo: req.user.id };
 
-    const [tasks, totalCount] = await Promise.all([
-      Task.find(query)
-        .populate('assignedTo', 'name email')
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
-      Task.countDocuments(query),
-    ]);
+    const { count: totalCount, rows: tasks } = await Task.findAndCountAll({
+      where: whereClause,
+      include: [
+        {
+          model: User,
+          as: 'AssignedUser',
+          attributes: ['id', 'name', 'email']
+        }
+      ],
+      order: [['createdAt', 'DESC']],
+      offset: skip,
+      limit
+    });
 
     res.status(200).json({
       tasks,
@@ -79,11 +86,11 @@ router.patch('/:id/status', auth, upload.none(), async (req, res) => {
   }
 
   try {
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findByPk(req.params.id);
     if (!task) return res.status(404).json({ message: 'Task not found' });
 
     // Security: Only assigned employee can update
-    if (req.user.role !== 'admin' && task.assignedTo.toString() !== req.user.id) {
+    if (req.user.role !== 'admin' && task.assignedTo !== req.user.id) {
       return res.status(403).json({ message: 'Unauthorized to update this task.' });
     }
 
