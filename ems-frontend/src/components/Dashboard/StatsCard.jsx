@@ -15,26 +15,26 @@ const StatsCard = ({
   const getVariantStyles = () => {
     switch (variant) {
       case "success":
-        return "border-green-300 bg-green-50";
+        return "border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20";
       case "warning":
-        return "border-yellow-300 bg-yellow-50";
+        return "border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20";
       case "destructive":
-        return "border-red-300 bg-red-50";
+        return "border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20";
       default:
-        return "border-indigo-300 bg-indigo-50";
+        return "border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-900/20";
     }
   };
 
   const getIconStyles = () => {
     switch (variant) {
       case "success":
-        return "text-green-600 bg-green-100";
+        return "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/40";
       case "warning":
-        return "text-yellow-600 bg-yellow-100";
+        return "text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/40";
       case "destructive":
-        return "text-red-600 bg-red-100";
+        return "text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/40";
       default:
-        return "text-indigo-600 bg-indigo-100";
+        return "text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/40";
     }
   };
 
@@ -81,8 +81,8 @@ const StatsCard = ({
     fetchAndCalculate();
   }, [statKey]);
 
-  if (loading) return <div className="p-5">Loading...</div>;
-  if (error) return <div className="p-5 text-red-500">{error}</div>;
+  if (loading) return <div className="p-5 text-gray-600 dark:text-gray-400">Loading...</div>;
+  if (error) return <div className="p-5 text-red-500 dark:text-red-400">{error}</div>;
 
   return (
     <div
@@ -92,8 +92,8 @@ const StatsCard = ({
       )}
     >
       <div className="flex-1">
-        <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-        <p className="text-3xl font-bold text-gray-900">{value}</p>
+        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{title}</p>
+        <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{value}</p>
       </div>
       <div
         className={cn(

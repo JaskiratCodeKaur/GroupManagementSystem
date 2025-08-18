@@ -51,14 +51,14 @@ const CreateMember = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-950">
       <Sidebar />
       <main className="flex-1 p-8">
-        <div className="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg border border-gray-200">
-          <h2 className="text-3xl font-bold text-emerald-600 mb-6">Create New Member</h2>
+        <div className="max-w-xl mx-auto bg-white dark:bg-gray-900 p-8 rounded-lg shadow-lg dark:shadow-gray-800 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-6">Create New Member</h2>
           {memberCreated ? (
             <div className="text-center">
-              <h3 className="text-2xl font-semibold text-emerald-600 mb-4">✅ Member successfully created!</h3>
+              <h3 className="text-2xl font-semibold text-emerald-600 dark:text-emerald-400 mb-4">✅ Member successfully created!</h3>
               <button
                 onClick={() => {
                   setMemberCreated(false);
@@ -66,7 +66,7 @@ const CreateMember = () => {
                   setSuccessMsg('');
                   setErrorMsg('');
                 }}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 rounded-md"
+                className="bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white py-2 px-4 rounded-md transition-colors"
               >
                 Create Another Member
               </button>
@@ -74,7 +74,7 @@ const CreateMember = () => {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Full Name
                 </label>
                 <input
@@ -85,12 +85,12 @@ const CreateMember = () => {
                   onChange={handleChange}
                   required
                   placeholder="John Doe"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Email
                 </label>
                 <input
@@ -101,12 +101,12 @@ const CreateMember = () => {
                   onChange={handleChange}
                   required
                   placeholder="john@example.com"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Password
                 </label>
                 <input
@@ -117,12 +117,12 @@ const CreateMember = () => {
                   onChange={handleChange}
                   required
                   placeholder="Enter password"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Role
                 </label>
                 <select
@@ -130,7 +130,7 @@ const CreateMember = () => {
                   name="role"
                   value={formData.role}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
                 >
                   <option value="employee">Employee</option>
                   <option value="admin">Admin</option>
@@ -138,7 +138,7 @@ const CreateMember = () => {
               </div>
 
               <div>
-                <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="department" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Department
                 </label>
                 <select
@@ -147,7 +147,7 @@ const CreateMember = () => {
                   value={formData.department}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
                 >
                   <option value="">Select Department</option>
                   {departments.map((dept) => (
@@ -158,12 +158,12 @@ const CreateMember = () => {
                 </select>
               </div>
 
-              {successMsg && <div className="text-green-600 font-medium">{successMsg}</div>}
-              {errorMsg && <div className="text-red-500 font-medium">{errorMsg}</div>}
+              {successMsg && <div className="text-green-600 dark:text-green-400 font-medium">{successMsg}</div>}
+              {errorMsg && <div className="text-red-500 dark:text-red-400 font-medium">{errorMsg}</div>}
 
               <button
                 type="submit"
-                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 rounded-md transition duration-200"
+                className="w-full bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-md transition duration-200"
               >
                 Create Member
               </button>

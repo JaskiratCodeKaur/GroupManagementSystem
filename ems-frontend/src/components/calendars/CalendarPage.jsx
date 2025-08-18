@@ -71,11 +71,11 @@ const CalendarPage = () => {
     <div className="flex min-h-screen">
       <SidebarComponent /> {/* Sidebar rendered here */}
 
-      <div className="flex-1 p-10 bg-gray-100 min-h-screen">
-        <h2 className="text-3xl font-bold mb-6">📅 Task Calendar</h2>
+      <div className="flex-1 p-10 bg-gray-100 dark:bg-gray-950 min-h-screen">
+        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">Task Calendar</h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="rounded-lg overflow-hidden shadow-xl bg-white p-6">
+          <div className="rounded-lg overflow-hidden shadow-xl dark:shadow-gray-800 bg-white dark:bg-gray-900 p-6 border dark:border-gray-700">
             <Calendar
               onChange={onDateChange}
               value={selectedDate}
@@ -90,21 +90,21 @@ const CalendarPage = () => {
             />
           </div>
 
-          <div className="bg-white rounded-lg p-6 shadow-xl">
-            <h3 className="text-2xl font-semibold mb-4">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-6 shadow-xl dark:shadow-gray-800 border dark:border-gray-700">
+            <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
               Tasks on {format(selectedDate, 'PPP')}
             </h3>
             {selectedDateTasks.length > 0 ? (
               <ul className="space-y-4">
                 {selectedDateTasks.map(task => (
-                  <li key={task._id} className="p-4 border-l-4 border-blue-500 bg-gray-50 rounded shadow">
-                    <p className="text-lg font-medium">{task.title}</p>
-                    <p className="text-sm text-gray-600">Due: {format(new Date(task.dueDate), 'PPPP')}</p>
-                    <p className="text-sm text-gray-600">
+                  <li key={task._id} className="p-4 border-l-4 border-emerald-600 dark:border-emerald-500 bg-gray-50 dark:bg-gray-800 rounded shadow dark:shadow-gray-700">
+                    <p className="text-lg font-medium text-gray-900 dark:text-gray-100">{task.title}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Due: {format(new Date(task.dueDate), 'PPPP')}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       Status: <span className="font-semibold">{task.status}</span>
                     </p>
                     {role === 'admin' && task.assignedTo && (
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         Assigned To: <span className="font-semibold">{task.assignedTo.name}</span>
                       </p>
                     )}
@@ -112,7 +112,7 @@ const CalendarPage = () => {
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-600 text-lg">No tasks due on this date.</p>
+              <p className="text-gray-600 dark:text-gray-400 text-lg">No tasks due on this date.</p>
             )}
           </div>
         </div>

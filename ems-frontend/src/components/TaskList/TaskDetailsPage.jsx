@@ -88,9 +88,9 @@ const TaskDetailsPage = () => {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-gray-100">
+      <div className="flex h-screen bg-gray-100 dark:bg-gray-950">
         <SidebarEmployee />
-        <main className="flex-1 flex items-center justify-center text-lg text-gray-600">
+        <main className="flex-1 flex items-center justify-center text-lg text-gray-600 dark:text-gray-400">
           Loading task details...
         </main>
       </div>
@@ -99,9 +99,9 @@ const TaskDetailsPage = () => {
 
   if (!task) {
     return (
-      <div className="flex h-screen bg-gray-100">
+      <div className="flex h-screen bg-gray-100 dark:bg-gray-950">
         <SidebarEmployee />
-        <main className="flex-1 flex items-center justify-center text-lg text-red-600">
+        <main className="flex-1 flex items-center justify-center text-lg text-red-600 dark:text-red-400">
           Failed to load task. Please try again later.
         </main>
       </div>
@@ -114,26 +114,26 @@ const TaskDetailsPage = () => {
       : task.createdBy || 'N/A';
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-950">
       <SidebarEmployee />
       <main className="flex-1 p-6 overflow-y-auto">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Task Details</h2>
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">Task Details</h2>
 
-        <div className="bg-white p-6 rounded-2xl shadow space-y-4 mb-6">
-          <p><strong>Title:</strong> {task.title}</p>
-          <p><strong>Description:</strong> {task.description}</p>
-          <p><strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}</p>
-          <p><strong>Status:</strong> <span className="capitalize">{task.status}</span></p>
-          <p><strong>Category:</strong> {task.category || 'N/A'}</p>
-          <p><strong>Assigned By:</strong> {assignedByText}</p>
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow dark:shadow-gray-800 space-y-4 mb-6 border dark:border-gray-700">
+          <p className="text-gray-900 dark:text-gray-100"><strong>Title:</strong> {task.title}</p>
+          <p className="text-gray-900 dark:text-gray-100"><strong>Description:</strong> {task.description}</p>
+          <p className="text-gray-900 dark:text-gray-100"><strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}</p>
+          <p className="text-gray-900 dark:text-gray-100"><strong>Status:</strong> <span className="capitalize">{task.status}</span></p>
+          <p className="text-gray-900 dark:text-gray-100"><strong>Category:</strong> {task.category || 'N/A'}</p>
+          <p className="text-gray-900 dark:text-gray-100"><strong>Assigned By:</strong> {assignedByText}</p>
         </div>
 
         {/* Notes Section */}
-        <div className="bg-white p-4 rounded-xl shadow mb-6">
-          <label className="block mb-2 font-semibold text-gray-700">Notes / Comments:</label>
+        <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow dark:shadow-gray-800 mb-6 border dark:border-gray-700">
+          <label className="block mb-2 font-semibold text-gray-700 dark:text-gray-300">Notes / Comments:</label>
           <textarea
             disabled={isCompleted}
-            className="w-full border border-gray-300 rounded p-3 text-gray-800 disabled:opacity-60 bg-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded p-3 text-gray-800 dark:text-gray-100 disabled:opacity-60 bg-gray-100 dark:bg-gray-800 focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
             rows="4"
             placeholder="Write your notes or summary here..."
             value={note}
@@ -142,31 +142,31 @@ const TaskDetailsPage = () => {
         </div>
 
         {/* File Upload / View Section */}
-        <div className="bg-white p-4 rounded-xl shadow mb-6">
-          <label className="block font-semibold mb-2 text-gray-700">
+        <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow dark:shadow-gray-800 mb-6 border dark:border-gray-700">
+          <label className="block font-semibold mb-2 text-gray-700 dark:text-gray-300">
             {isCompleted ? 'Submitted Attachments:' : 'Attach Files:'}
           </label>
 
           {isCompleted ? (
             task.attachments && task.attachments.length > 0 ? (
-              <ul className="list-disc list-inside text-blue-600">
+              <ul className="list-disc list-inside text-blue-600 dark:text-blue-400">
                 {task.attachments.map((fileUrl, idx) => (
                   <li key={idx}>
-                    <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="underline">
+                    <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-700 dark:hover:text-blue-300">
                       {fileUrl.split('/').pop()}
                     </a>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-500">No attachments submitted.</p>
+              <p className="text-gray-500 dark:text-gray-400">No attachments submitted.</p>
             )
           ) : (
             <input
               type="file"
               multiple
               onChange={handleFileChange}
-              className="block w-full border border-gray-300 rounded px-3 py-2"
+              className="block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-3 py-2"
               disabled={isCompleted}
             />
           )}
@@ -180,14 +180,14 @@ const TaskDetailsPage = () => {
                 <button
                   onClick={() => handleAction('accept')}
                   disabled={actionInProgress}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-xl font-medium disabled:opacity-50"
+                  className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white px-6 py-2 rounded-xl font-medium disabled:opacity-50 transition-colors"
                 >
                   Accept
                 </button>
                 <button
                   onClick={() => handleAction('decline')}
                   disabled={actionInProgress}
-                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-xl font-medium disabled:opacity-50"
+                  className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 text-white px-6 py-2 rounded-xl font-medium disabled:opacity-50 transition-colors"
                 >
                   Decline
                 </button>
@@ -197,7 +197,7 @@ const TaskDetailsPage = () => {
                 <button
                   onClick={() => handleAction('complete')}
                   disabled={actionInProgress}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-medium disabled:opacity-50"
+                  className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white px-6 py-2 rounded-xl font-medium disabled:opacity-50 transition-colors"
                 >
                   Mark as Complete
                 </button>

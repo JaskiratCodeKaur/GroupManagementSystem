@@ -84,17 +84,17 @@ const EmployeeDashboard = () => {
   if (!user) return null;
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-950">
       <SidebarEmployee />
       <main className="flex-1 p-6 overflow-y-auto flex flex-col xl:flex-row">
         {/* Main Left Section */}
         <div className="flex-1 xl:pr-6">
           {/* Welcome Banner */}
-          <div className="bg-white p-6 rounded-xl shadow mb-6 flex justify-between items-center">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow dark:shadow-gray-800 mb-6 flex justify-between items-center border dark:border-gray-700">
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">Hello, {user.name}</h2>
-              <p className="text-sm text-gray-500">You have {todayTasks} task{todayTasks !== 1 ? 's' : ''} today</p>
-              <button className="mt-2 px-4 py-1 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Hello, {user.name}</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">You have {todayTasks} task{todayTasks !== 1 ? 's' : ''} today</p>
+              <button className="mt-2 px-4 py-1 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md text-sm hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors">
                 View Task
               </button>
             </div>
@@ -111,8 +111,8 @@ const EmployeeDashboard = () => {
           {/* Charts Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Pie Chart */}
-            <div className="bg-white p-4 rounded-xl shadow">
-              <h4 className="text-md font-semibold text-gray-700 mb-4">Task Summary</h4>
+            <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow dark:shadow-gray-800 border dark:border-gray-700">
+              <h4 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-4">Task Summary</h4>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie data={taskStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70}>
@@ -120,21 +120,21 @@ const EmployeeDashboard = () => {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip contentStyle={{ backgroundColor: 'var(--tooltip-bg, #fff)', color: 'var(--tooltip-text, #000)' }} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
             </div>
 
             {/* Bar Chart */}
-            <div className="bg-white p-4 rounded-xl shadow">
-              <h4 className="text-md font-semibold text-gray-700 mb-4">Task Activity</h4>
+            <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow dark:shadow-gray-800 border dark:border-gray-700">
+              <h4 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-4">Task Activity</h4>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={taskTrends}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="date" stroke="#9ca3af" />
+                  <YAxis allowDecimals={false} stroke="#9ca3af" />
+                  <Tooltip contentStyle={{ backgroundColor: 'var(--tooltip-bg, #fff)', color: 'var(--tooltip-text, #000)' }} />
                   <Bar dataKey="count" fill="#3b82f6" />
                 </BarChart>
               </ResponsiveContainer>
@@ -144,20 +144,20 @@ const EmployeeDashboard = () => {
 
         {/* Optional Right Panel (Calendar, Schedule, Reminder) */}
         <div className="hidden xl:block w-80 ml-6 space-y-6">
-          <div className="bg-white p-4 rounded-xl shadow">
-            <h4 className="font-semibold text-gray-700 mb-2">Calendar</h4>
-            <div className="text-gray-400 text-sm text-center py-8">📅 Calendar Placeholder</div>
+          <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow dark:shadow-gray-800 border dark:border-gray-700">
+            <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Calendar</h4>
+            <div className="text-gray-400 dark:text-gray-500 text-sm text-center py-8">📅 Calendar Placeholder</div>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow">
-            <h4 className="font-semibold text-gray-700 mb-2">Schedule</h4>
-            <ul className="text-sm text-gray-600 space-y-2">
+          <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow dark:shadow-gray-800 border dark:border-gray-700">
+            <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Schedule</h4>
+            <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
               <li>🕘 Team Stand-up – 9:00 AM</li>
               <li>💼 Client Sync – 1:00 PM</li>
             </ul>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow">
-            <h4 className="font-semibold text-gray-700 mb-2">Reminders</h4>
-            <p className="text-sm text-gray-500">Submit your weekly report by 5 PM</p>
+          <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow dark:shadow-gray-800 border dark:border-gray-700">
+            <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Reminders</h4>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Submit your weekly report by 5 PM</p>
           </div>
         </div>
       </main>
@@ -167,11 +167,11 @@ const EmployeeDashboard = () => {
 
 // Summary Card Component
 const SummaryCard = ({ icon, label, value, color }) => (
-  <div className="bg-white p-4 rounded-xl shadow flex items-center gap-3">
-    <div className={`text-3xl text-${color}-500`}>{icon}</div>
+  <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow dark:shadow-gray-800 flex items-center gap-3 border dark:border-gray-700">
+    <div className={`text-3xl text-${color}-500 dark:text-${color}-400`}>{icon}</div>
     <div>
-      <p className="text-sm text-gray-500">{label}</p>
-      <h3 className="text-xl font-bold text-gray-800">{value}</h3>
+      <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
+      <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">{value}</h3>
     </div>
   </div>
 );

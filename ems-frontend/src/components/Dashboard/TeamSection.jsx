@@ -39,8 +39,8 @@ const TeamSection = () => {
     fetchData();
   }, []);
 
-  if (loading) return <p>Loading team members...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading) return <p className="text-gray-600 dark:text-gray-400">Loading team members...</p>;
+  if (error) return <p className="text-red-500 dark:text-red-400">{error}</p>;
 
   // Helper to count tasks assigned to a member
   const countTasksForMember = (memberId) => {
@@ -48,46 +48,46 @@ const TeamSection = () => {
   };
 
   return (
-    <section className="bg-white rounded-2xl shadow p-6 max-w-3xl mx-auto">
+    <section className="bg-white dark:bg-gray-900 rounded-2xl shadow dark:shadow-gray-800 p-6 max-w-3xl mx-auto border dark:border-gray-700">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">My Team</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">My Team</h2>
         <button
           onClick={() => navigate('/create-member')}
-          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 rounded-md hover:from-indigo-600 hover:to-purple-700"
+          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-emerald-600 rounded-md hover:from-indigo-600 hover:to-emerald-700 transition-all"
         >
           <FaPlus className="w-4 h-4" />
           Add Member
         </button>
       </div>
       {teamMembers.length === 0 ? (
-        <p className="text-gray-400">No team members found.</p>
+        <p className="text-gray-400 dark:text-gray-500">No team members found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {teamMembers.map((member) => (
             <div
               key={member._id || member.id}
-              className="p-4 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow"
+              className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:shadow-lg dark:hover:shadow-gray-700 transition-shadow"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="inline-block rounded-full bg-gray-200 w-12 h-12 flex items-center justify-center text-indigo-700 font-semibold text-lg">
+                    <div className="inline-block rounded-full bg-gray-200 dark:bg-gray-700 w-12 h-12 flex items-center justify-center text-indigo-700 dark:text-indigo-400 font-semibold text-lg">
                       {member.name
                         ? member.name.split(' ').map(n => n[0]).join('')
                         : 'NA'}
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 text-sm">{member.name}</h4>
-                    <p className="text-xs text-gray-500">{member.role || 'Employee'}</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{member.name}</h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{member.role || 'Employee'}</p>
                   </div>
                 </div>
-                <span className="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-200 text-gray-700">
+                <span className="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                   {countTasksForMember(member._id || member.id)} tasks
                 </span>
               </div>
 
-              <div className="flex items-center justify-between text-xs text-gray-500">
+              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                 <div className="flex items-center gap-1 truncate max-w-[120px]">
                   <FaMailBulk className="w-3 h-3" />
                   <span>{member.email}</span>

@@ -46,15 +46,15 @@ const MiniCalendar = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow space-y-6">
+    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow dark:shadow-gray-800 space-y-6 border dark:border-gray-700">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-indigo-600" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
             Calendar
           </h3>
-          <p className="text-sm text-gray-500">Your calendar overview</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Your calendar overview</p>
         </div>
       </div>
 
@@ -70,7 +70,7 @@ const MiniCalendar = () => {
           <ChevronLeft className="h-4 w-4" />
         </Button>
 
-        <h4 className="font-semibold text-gray-900">
+        <h4 className="font-semibold text-gray-900 dark:text-gray-100">
           {monthNames[currentMonth]} {currentYear}
         </h4>
 
@@ -88,7 +88,7 @@ const MiniCalendar = () => {
       {/* Day names */}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {dayNames.map(day => (
-          <div key={day} className="text-center text-xs font-medium text-gray-400 p-2">
+          <div key={day} className="text-center text-xs font-medium text-gray-400 dark:text-gray-500 p-2">
             {day}
           </div>
         ))}
@@ -101,8 +101,8 @@ const MiniCalendar = () => {
             key={idx}
             className={`
               aspect-square flex items-center justify-center text-sm relative
-              ${day ? 'hover:bg-gray-200 cursor-pointer rounded-lg' : ''}
-              ${isToday(day || 0) ? 'bg-indigo-600 text-white font-semibold rounded-lg' : ''}
+              ${day ? 'hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer rounded-lg text-gray-900 dark:text-gray-100' : ''}
+              ${isToday(day || 0) ? 'bg-indigo-600 dark:bg-indigo-500 text-white font-semibold rounded-lg' : ''}
             `}
           >
             {day && <span>{day}</span>}

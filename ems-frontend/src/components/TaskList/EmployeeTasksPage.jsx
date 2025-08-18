@@ -43,14 +43,14 @@ const EmployeeTasksPage = () => {
   const totalPages = Math.ceil(totalTasks / pageSize);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-950">
       <SidebarEmployee />
       <main className="flex-1 p-6 overflow-y-auto">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">My Tasks</h2>
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">My Tasks</h2>
 
-        <div className="bg-white p-6 rounded-2xl shadow overflow-x-auto">
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow dark:shadow-gray-800 overflow-x-auto border dark:border-gray-700">
           <table className="min-w-full text-left text-sm">
-            <thead className="border-b font-medium text-gray-700">
+            <thead className="border-b dark:border-gray-700 font-medium text-gray-700 dark:text-gray-300">
               <tr>
                 <th className="px-4 py-2">Title</th>
                 <th className="px-4 py-2">Status</th>
@@ -60,10 +60,10 @@ const EmployeeTasksPage = () => {
             </thead>
             <tbody>
               {tasks.map(task => (
-                <tr key={task._id} className="border-b hover:bg-gray-50">
+                <tr key={task._id} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-100">
                   <td className="px-4 py-2">{task.title}</td>
                   <td className="px-4 py-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColors[task.status] || 'bg-gray-200 text-gray-800'}`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColors[task.status] || 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}>
                       {task.status}
                     </span>
                   </td>
@@ -71,7 +71,7 @@ const EmployeeTasksPage = () => {
                   <td className="px-4 py-2 text-center">
                     <button
                       onClick={() => navigate(`/task-details/${task._id}`)}
-                      className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm"
+                      className="bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
                     >
                       View Details
                     </button>
@@ -80,7 +80,7 @@ const EmployeeTasksPage = () => {
               ))}
               {tasks.length === 0 && (
                 <tr>
-                  <td colSpan="4" className="text-center py-4 text-gray-500">No tasks assigned.</td>
+                  <td colSpan="4" className="text-center py-4 text-gray-500 dark:text-gray-400">No tasks assigned.</td>
                 </tr>
               )}
             </tbody>
@@ -91,15 +91,15 @@ const EmployeeTasksPage = () => {
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+              className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded disabled:opacity-50 transition-colors"
             >
               Previous
             </button>
-            <span className="text-sm text-gray-700">Page {currentPage} of {totalPages}</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300 dark:text-gray-300">Page {currentPage} of {totalPages}</span>
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+              className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded disabled:opacity-50 transition-colors"
             >
               Next
             </button>

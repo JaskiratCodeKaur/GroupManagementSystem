@@ -1,135 +1,239 @@
 import React, { useEffect, useState } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
 import axios from 'axios';
-import { format } from 'date-fns';
+import Sidebar from '../main/Sidebar';
+import { useNavigate } from 'react-router-dom';
 
-import SidebarEmployee from '../main/SidebarEmployee';
-import SidebarAdmin from '../main/Sidebar';  // <-- import admin sidebar
-
-import '../calendars/custom-calendar.css';
-
-const CalendarPage = () => {
-  const [tasks, setTasks] = useState([]);
-  const [selectedDateTasks, setSelectedDateTasks] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [role, setRole] = useState('');
-  const [userId, setUserId] = useState('');
+const CreateTask = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    dueDate: '',
+    assignedTo: '',
+    category: '',
+    priority: 'medium',
+    status: 'pending',
+  });
+  const [members, setMembers] = useState([]);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const [taskCreated, setTaskCreated] = useState(false);
 
   useEffect(() => {
-    // Get user role and id from localStorage or auth context
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      setRole(user.role.toLowerCase());
-      setUserId(user._id || user.id);
-    }
+    fetchMembers();
   }, []);
 
-  useEffect(() => {
-    if (role) {
-      fetchTasks();
-    }
-  }, [role]);
-
-  const fetchTasks = async () => {
+  const fetchMembers = async () => {
     try {
       const token = localStorage.getItem('token');
-
-      // Choose endpoint based on role
-      let url = 'http://localhost:5000/api/tasks/upcoming';
-
-      if (role === 'employee') {
-        // Employee sees only tasks assigned to them
-        url = `http://localhost:5000/api/tasks/assigned/${userId}`;
-      }
-
-      const response = await axios.get(url, {
+      const response = await axios.get('http://localhost:5000/api/auth/members', {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      const data = Array.isArray(response.data) ? response.data : response.data.tasks || [];
-      setTasks(data);
-      filterTasksByDate(new Date(), data);
+      setMembers(response.data || []);
     } catch (err) {
-      console.error('Calendar fetch error:', err);
+      console.error('Failed to fetch members:', err);
+      setErrorMsg('Failed to load team members');
     }
   };
 
-  const filterTasksByDate = (date, allTasks = tasks) => {
-    const dateStr = format(date, 'yyyy-MM-dd');
-    const filtered = allTasks.filter(
-      task => format(new Date(task.dueDate), 'yyyy-MM-dd') === dateStr
-    );
-    setSelectedDateTasks(filtered);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const onDateChange = (date) => {
-    setSelectedDate(date);
-    filterTasksByDate(date);
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSuccessMsg('');
+    setErrorMsg('');
 
-  // Choose sidebar based on role
-  const SidebarComponent = role === 'admin' ? SidebarAdmin : SidebarEmployee;
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:5000/api/tasks', formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      setSuccessMsg('Task created successfully!');
+      setTaskCreated(true);
+      setFormData({
+        title: '',
+        description: '',
+        dueDate: '',
+        assignedTo: '',
+        category: '',
+        priority: 'medium',
+        status: 'pending',
+      });
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || 'Failed to create task');
+    }
+  };
 
   return (
-    <div className="flex min-h-screen">
-      <SidebarComponent /> {/* Dynamic sidebar */}
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-950">
+      <Sidebar />
+      <main className="flex-1 p-8">
+        <div className="max-w-2xl mx-auto bg-white dark:bg-gray-900 p-8 rounded-lg shadow-lg dark:shadow-gray-800 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-6">
+            Create New Task
+          </h2>
 
-      <div className="flex-1 p-10 bg-gray-100 min-h-screen">
-        <h2 className="text-3xl font-bold mb-6">📅 Task Calendar</h2>
+          {taskCreated ? (
+            <div className="text-center">
+              <div className="mb-6">
+                <svg className="mx-auto h-16 w-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-semibold text-green-600 dark:text-green-400 mb-4">
+                Task Created Successfully!
+              </h3>
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => {
+                    setTaskCreated(false);
+                    setSuccessMsg('');
+                    setErrorMsg('');
+                  }}
+                  className="bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white py-2 px-6 rounded-md transition-colors"
+                >
+                  Create Another Task
+                </button>
+                <button
+                  onClick={() => navigate('/all-tasks')}
+                  className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white py-2 px-6 rounded-md transition-colors"
+                >
+                  View All Tasks
+                </button>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Task Title *
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g., Code Review - Authentication Module"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
+                />
+              </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="rounded-lg overflow-hidden shadow-xl bg-white p-6">
-            <Calendar
-              onChange={onDateChange}
-              value={selectedDate}
-              className="w-full big-calendar"
-              tileContent={({ date }) => {
-                const dateStr = format(date, 'yyyy-MM-dd');
-                const hasTask = tasks.some(
-                  task => format(new Date(task.dueDate), 'yyyy-MM-dd') === dateStr
-                );
-                return hasTask ? <div className="dot"></div> : null;
-              }}
-            />
-          </div>
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Description *
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                  rows="4"
+                  placeholder="Detailed description of the task..."
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
+                />
+              </div>
 
-          <div className="bg-white rounded-lg p-6 shadow-xl">
-            <h3 className="text-2xl font-semibold mb-4">
-              Tasks on {format(selectedDate, 'PPP')}
-            </h3>
-            {selectedDateTasks.length > 0 ? (
-              <ul className="space-y-4">
-                {selectedDateTasks.map(task => (
-                  <li
-                    key={task._id}
-                    className="p-4 border-l-4 border-blue-500 bg-gray-50 rounded shadow"
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Category *
+                  </label>
+                  <input
+                    type="text"
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                    placeholder="e.g., Development, Design"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="priority" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Priority
+                  </label>
+                  <select
+                    id="priority"
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
                   >
-                    <p className="text-lg font-medium">{task.title}</p>
-                    <p className="text-sm text-gray-600">
-                      Due: {format(new Date(task.dueDate), 'PPPP')}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Status: <span className="font-semibold">{task.status}</span>
-                    </p>
-                    {/* Show assigned to only for admin */}
-                    {role === 'admin' && task.assignedTo && (
-                      <p className="text-sm text-gray-600">
-                        Assigned To:{' '}
-                        <span className="font-semibold">{task.assignedTo.name}</span>
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-600 text-lg">No tasks due on this date.</p>
-            )}
-          </div>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="assignedTo" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Assign To *
+                </label>
+                <select
+                  id="assignedTo"
+                  name="assignedTo"
+                  value={formData.assignedTo}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
+                >
+                  <option value="">Select Team Member</option>
+                  {members.map((member) => (
+                    <option key={member.id} value={member.id}>
+                      {member.name} - {member.email}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Due Date *
+                </label>
+                <input
+                  type="date"
+                  id="dueDate"
+                  name="dueDate"
+                  value={formData.dueDate}
+                  onChange={handleChange}
+                  required
+                  min={new Date().toISOString().split('T')[0]}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-500"
+                />
+              </div>
+
+              {successMsg && (
+                <div className="text-green-600 dark:text-green-400 font-medium bg-green-50 dark:bg-green-900/20 p-3 rounded-md">
+                  {successMsg}
+                </div>
+              )}
+              {errorMsg && (
+                <div className="text-red-500 dark:text-red-400 font-medium bg-red-50 dark:bg-red-900/20 p-3 rounded-md">
+                  {errorMsg}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-md transition duration-200"
+              >
+                Create Task
+              </button>
+            </form>
+          )}
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
-export default CalendarPage;
+export default CreateTask;

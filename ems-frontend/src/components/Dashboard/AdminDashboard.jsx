@@ -79,12 +79,12 @@ const AdminDashboard = () => {
   if (!user) return null;
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-950">
       <Sidebar />
       <main className="flex-1 p-8 overflow-y-auto space-y-10">
-        <div class="mb-6 pb-3 border-b border-gray-300">
-          <h1 className="text-3xl font-semibold text-gray-900 leading-tight mb-2">
-            Welcome back, <span className="text-indigo-600">{user.name}</span>
+        <div className="mb-6 pb-3 border-b border-gray-300 dark:border-gray-700">
+          <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 leading-tight mb-2">
+            Welcome back, <span className="bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">{user.name}</span>
           </h1>
         </div>
         

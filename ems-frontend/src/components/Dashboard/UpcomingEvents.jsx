@@ -48,27 +48,27 @@ const UpcomingEvents = () => {
   }, []);
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow space-y-2 max-w-3xl mx-auto">
-      <h5 className="text-sm font-medium text-gray-900 flex items-center gap-2 mb-4">
+    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow dark:shadow-gray-800 space-y-2 max-w-3xl mx-auto border dark:border-gray-700">
+      <h5 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2 mb-4">
         <Clock className="h-4 w-4" />
         Tasks Assigned
       </h5>
 
       {loading ? (
-        <p className="text-gray-600">Loading tasks...</p>
+        <p className="text-gray-600 dark:text-gray-400">Loading tasks...</p>
       ) : error ? (
-        <p className="text-red-500">{error}</p>
+        <p className="text-red-500 dark:text-red-400">{error}</p>
       ) : tasks.length === 0 ? (
-        <p className="text-gray-500">No tasks assigned.</p>
+        <p className="text-gray-500 dark:text-gray-400">No tasks assigned.</p>
       ) : (
         tasks.map((task) => (
           <div
             key={task._id || task.id}
-            className="flex items-center justify-between p-3 bg-gray-100 rounded-lg"
+            className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 rounded-lg border dark:border-gray-700"
           >
             <div>
-              <p className="text-sm font-medium text-gray-900">{task.title}</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{task.title}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 Due: {new Date(task.dueDate).toLocaleDateString()}
               </p>
             </div>
